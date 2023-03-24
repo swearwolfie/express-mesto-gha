@@ -1,11 +1,12 @@
 // импорт экспресса и монго
 const express = require('express');
 const mongoose = require('mongoose');
-const PORT = 3000;
+const bodyParser = requier('body-parser');
+const path = require('path');
 
 // создаем приложение
 const app = express();
-
+const { PORT = 3000 } = process.env;
 
 // подключаемся к серверу mongo
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -14,10 +15,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
     useFindAndModify: false
 });
 
-// при гет-запросе экспресс выполняет колбэк привета
-app.get('get', (req, res) => {
-  res.send('hello');
-})
+// мидлвар переваривания информации
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // более юная версия - app.use(express.json())
+
+// если в будущем понадобятся файлы фпонта из локальных папок
+/* app.use(express.static(path.join(__dirname + '/public'))); */
 
 // запуск сервера
 app.listen(PORT, () => {
