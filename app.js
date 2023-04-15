@@ -23,7 +23,17 @@ app.use(bodyParser.urlencoded({ extended: true })); // более юная ве�
 // если в будущем понадобятся файлы фронта из локальных папок
 /* app.use(express.static(path.join(__dirname + '/public'))); */
 
+// доп мидлвар, который задает айди для создания карточки
+app.use((req, res, next) => {
+  req.user = {
+    _id: '642c97f752a0f2ec09557f35' //  _id созданного пользователя Kate Bishop
+  };
+
+  next();
+});
+
 app.use('/', require('./routes/users'));
+app.use('/', require('./routes/cards'));
 
 // запуск сервера
 app.listen(PORT, () => {
