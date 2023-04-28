@@ -1,9 +1,14 @@
-const User = require("../models/user");
+const User = require('../models/user');
+/*
+const bcrypt = require('bcryptjs'); // импортируем bcrypt для хэширования паролей
+const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken для создания токена
+const { celebrate, Joi } = require('celebrate'); библиотека для валидации данных
+*/
 const {
-  error_code,
-  error_default,
-  error_unfound,
-} = require("../utils/constants");
+  errorCode,
+  errorDefault,
+  errorUnfound,
+} = require('../utils/constants');
 // code - 400, default - 500, unfound - 404
 
 module.exports.createUser = (req, res) => {
@@ -11,41 +16,52 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send(user)) // 200 - успех, 201 – успех и что-то создалось
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         return res
-          .status(error_code)
-          .send({ message: "Переданы некорректные данные при создании user" });
+          .status(errorCode)
+          .send({ message: 'Переданы некорректные данные при создании user' });
       }
-      return res.status(error_default).send({ message: "Что-то пошло не так" });
+      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
     });
 };
+
+/*
+exports.createUser = (req, res) => {
+  // хешируем пароль
+  bcrypt.hash(req.body.password, 10)
+    .then(hash => User.create({
+      email: req.body.email,
+      password: hash, // записываем хеш в базу
+    }))
+    .then((user) => res.send(user))
+    .catch((err) => res.status(400).send(err));
+};
+*/
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user === null) {
         return res
-          .status(error_unfound)
-          .send({ message: "Пользователь по указанному _id не найден." });
+          .status(errorUnfound)
+          .send({ message: 'Пользователь по указанному _id не найден.' });
       }
       return res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         return res
-          .status(error_code)
-          .send({ message: "Передан некорректный id" });
+          .status(errorCode)
+          .send({ message: 'Передан некорректный id' });
       }
-      return res.status(error_default).send({ message: "Что-то пошло не так" });
+      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
     });
 };
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send({ data: users }))
-    .catch(() => {
-      return res.status(error_default).send({ message: "Что-то пошло не так" });
-    });
+    .catch(() => res.status(errorDefault).send({ message: 'Что-то пошло не так' }));
 };
 
 module.exports.changeUser = (req, res) => {
@@ -54,25 +70,27 @@ module.exports.changeUser = (req, res) => {
     {
       name: req.body.name,
       about: req.body.about,
-      avatar: req.body.avatar,
     },
-    { new: true }
+    {
+      new: true,
+      runValidators: true,
+    },
   )
     .then((user) => {
       if (user === null) {
         return res
-          .status(error_unfound)
-          .send({ message: "Пользователь по указанному _id не найден." });
+          .status(errorUnfound)
+          .send({ message: 'Пользователь по указанному _id не найден.' });
       }
       return res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'ValidationError') {
         return res
-          .status(error_code)
-          .send({ message: "Передан некорректный id" });
+          .status(errorCode)
+          .send({ message: 'Переданы некорректные данные для обновления профиля' });
       }
-      return res.status(error_default).send({ message: "Что-то пошло не так" });
+      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
     });
 };
 
@@ -82,22 +100,25 @@ module.exports.changeAvatar = (req, res) => {
     {
       avatar: req.body.avatar,
     },
-    { new: true } // возвращает проапдейтенный вариант (например, в постмане ?)
+    {
+      new: true,
+      runValidators: true,
+    },
   )
     .then((user) => {
       if (user === null) {
         return res
-          .status(error_unfound)
-          .send({ message: "Пользователь по указанному _id не найден." });
+          .status(errorUnfound)
+          .send({ message: 'Пользователь по указанному _id не найден.' });
       }
       return res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'ValidationError') {
         return res
-          .status(error_code)
-          .send({ message: "Передан некорректный id" });
+          .status(errorCode)
+          .send({ message: 'Переданы некорректные данные для обновления аватара' });
       }
-      return res.status(error_default).send({ message: "Что-то пошло не так" });
+      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
     });
 };

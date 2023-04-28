@@ -1,6 +1,5 @@
+const errorCode = 400;
+const errorUnfound = 404;
+const errorDefault = 500;
 
-const error_code = 400;
-const error_unfound = 404;
-const error_default = 500;
-
-module.exports = { error_code, error_default, error_unfound };
+module.exports = { errorCode, errorDefault, errorUnfound };
