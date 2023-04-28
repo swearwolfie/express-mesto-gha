@@ -1,6 +1,9 @@
 // импорт экспресса и монго
 const express = require('express');
 const mongoose = require('mongoose');
+const {
+  errorUnfound,
+} = require('./utils/constants');
 // const path = require('path');
 /*
 const { celebrate, Joi } = require('celebrate'); библиотека для валидации данных
@@ -30,6 +33,12 @@ app.use((req, res, next) => {
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.use((res) => {
+  res.status(errorUnfound).render({
+    message: 'Такого адреса не существует',
+  });
+});
 
 // запуск сервера
 app.listen(PORT, () => {
