@@ -10,11 +10,12 @@ const {
   errorUnfound,
 } = require('../utils/constants');
 // code - 400, default - 500, unfound - 404
+// 200 - успех, 201 – успех и что-то создалось
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send(user)) // 200 - успех, 201 – успех и что-то создалось
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res
