@@ -3,14 +3,17 @@ const {
   errorCode,
   errorDefault,
   errorUnfound,
+  errorForbidden,
+  created,
+  success,
 } = require('../utils/constants');
-// code - 400, default - 500, unfound - 404
+// code - 400, default - 500, unfound - 404, forbidden - 403
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(created).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res
@@ -26,7 +29,7 @@ module.exports.createCard = (req, res) => {
 module.exports.getCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.status(200).send({ data: cards }))
+    .then((cards) => res.status(success).send({ data: cards }))
     .catch(() => res.status(errorDefault).send({ message: 'Что-то пошло не так' }));
 };
 
@@ -38,7 +41,12 @@ module.exports.deleteCard = (req, res) => {
           .status(errorUnfound)
           .send({ message: 'Карточка по указанному _id не найдена.' });
       }
-      return res.status(200).send({ data: card });
+      if (card.owner.toString() !== req.user._id) {
+        return res
+          .status(errorForbidden)
+          .send({ message: 'Нельзя удалить чужую карточку' });
+      }
+      return res.status(success).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -62,7 +70,7 @@ module.exports.putLike = (req, res) => {
           .status(errorUnfound)
           .send({ message: 'Карточка по указанному _id не найдена.' });
       }
-      return res.status(200).send({ data: card });
+      return res.status(success).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -86,7 +94,7 @@ module.exports.deleteLike = (req, res) => {
           .status(errorUnfound)
           .send({ message: 'Карточка по указанному _id не найдена.' });
       }
-      return res.status(200).send({ data: card });
+      return res.status(success).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
