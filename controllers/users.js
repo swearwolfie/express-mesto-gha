@@ -9,6 +9,7 @@ const {
 } = require('../utils/constants');
 // code - 400, default - 500, unfound - 404
 // 200 - успех, 201 – успех и что-то создалось
+const { JWT_SECRET } = require('../config');
 
 module.exports.createUser = (req, res) => {
   const
@@ -37,7 +38,7 @@ module.exports.createUser = (req, res) => {
         return res.status(errorDouble)
           .send({ message: 'Такой пользователь уже существует' });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -70,14 +71,14 @@ module.exports.getUser = (req, res) => {
           .status(errorCode)
           .send({ message: 'Передан некорректный id' });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(success).send({ data: users }))
-    .catch(() => res.status(errorDefault).send({ message: 'Что-то пошло не так' }));
+    .catch(() => res.status(errorDefault).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.changeUser = (req, res) => {
@@ -108,7 +109,7 @@ module.exports.changeUser = (req, res) => {
             message: 'Переданы некорректные данные для обновления профиля',
           });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -139,7 +140,7 @@ module.exports.changeAvatar = (req, res) => {
             message: 'Переданы некорректные данные для обновления аватара',
           });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -157,7 +158,7 @@ module.exports.login = (req, res) => {
     }))
     .then((user) => {
       // создадим токен
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res.send({ token }); // вернём токен
     })
     .catch(() => {
@@ -184,6 +185,6 @@ module.exports.getCurrentUser = (req, res) => {
           .status(errorCode)
           .send({ message: 'Передан некорректный id' });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };

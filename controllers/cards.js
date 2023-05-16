@@ -22,7 +22,7 @@ module.exports.createCard = (req, res) => {
             message: 'Переданы некорректные данные при создании карточки',
           });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -30,7 +30,7 @@ module.exports.getCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.status(success).send({ data: cards }))
-    .catch(() => res.status(errorDefault).send({ message: 'Что-то пошло не так' }));
+    .catch(() => res.status(errorDefault).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -54,7 +54,7 @@ module.exports.deleteCard = (req, res) => {
           .status(errorCode)
           .send({ message: 'Передан некорректный id' });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -78,7 +78,7 @@ module.exports.putLike = (req, res) => {
           .status(errorCode)
           .send({ message: 'Передан некорректный id' });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -102,6 +102,6 @@ module.exports.deleteLike = (req, res) => {
           .status(errorCode)
           .send({ message: 'Передан некорректный id' });
       }
-      return res.status(errorDefault).send({ message: 'Что-то пошло не так' });
+      return res.status(errorDefault).send({ message: 'На сервере произошла ошибка' });
     });
 };

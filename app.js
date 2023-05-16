@@ -9,6 +9,8 @@ const {
 } = require('./utils/constants');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { DB_ADDRESS } = require('./config');
+
 // const path = require('path');
 
 // создаем приложение
@@ -16,7 +18,7 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 // подключаемся к серверу mongo
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+mongoose.connect(DB_ADDRESS, {
   autoIndex: true,
 });
 
